@@ -1,0 +1,11 @@
+<Configuration ShowEditConfiguration="False">
+    <Instructions>
+        <Instruction Type="Update">
+            <Name></Name>
+            <Script>
+                C:/Program Files/ANSYS Inc/v170/Addins/ExternalConnection/SystemDefinitions/
+                GenericMaterialTransfer/test.py
+            </Script>
+        </Instruction>
+    </Instructions>
+</Configuration>

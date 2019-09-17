@@ -1,0 +1,48 @@
+准备：计算点集合的中心方法(已经实现)
+	 x_m = (x1 + x2 + x3... + xn) / n
+	 y_m = (y1 + y2 + y3... + yn) / n
+	 z_m = (z1 + z2 + z3... + zn) / n
+
+	 计算梁单元的方向向量（已经实现）
+	 node_vect computer_vect(node1, node2)
+
+
+Nastran:
+RBE2单元连接（已经完成）
+输入： 1. node1,node2,...,noden	#点集合1
+
+处理： 1. 求点集合1的中心点坐标
+	  
+输出： 1. GRID,(GRID编号),,(x_m),(y_m),(z_m)	#集合1的中心点(Mid_G_1) 
+	  2. RBE2,(REE2编号),(Mid_G_1的编号),123456,(node1编号),(node2编号),...,(noden编号)
+
+
+梁单元连接
+输入： 1. node1,node2,...,noden	#点集合1
+	  2. node1,node2,...,nodem	#点集合2
+	  3. 梁单元材料(Mat_Id)、面积(A)、惯性矩(I)、极惯性矩(J)
+
+处理： 1. 求点集合1的中心点坐标、集合2的中心点坐标
+	  2. 根据computer_vect(node1, node2)求两个中心点的方向向量(V1, V2, V3)
+
+输出： 1. GRID,(GRID编号),,(x_m),(y_m),(z_m) #集合1的中心点(Mid_G_1)
+	  2. GRID,(GRID编号),,(x_m),(y_m),(z_m) #集合2的中心点(Mid_G_2)
+	  3. RBE2,(REE2编号),(Mid_G_1的编号),123456,(node1编号),(node2编号),...,(noden编号)
+	  4. RBE2,(REE2编号),(Mid_G_2的编号),123456,(node1编号),(node2编号),...,(nodem编号)
+	  5. PBAR,(PBAR编号),(Mat_Id),(A),(I),(I),(J)
+	  6. CBAR,(CBAR编号),(PBAR编号),(Mid_G_1),(Mid_G_2),(V1),(V2),(V3)
+
+
+杆单元连接
+输入： 1. node1,node2,...,noden	#点集合1
+	  2. node1,node2,...,nodem	#点集合2
+	  3. 杆单元材料(Mat_Id)、面积(A)
+
+处理： 1. 求点集合1的中心点坐标、集合2的中心点坐标
+
+输出： 1. GRID,(GRID编号),,(x_m),(y_m),(z_m) #集合1的中心点(Mid_G_1)
+	  2. GRID,(GRID编号),,(x_m),(y_m),(z_m) #集合2的中心点(Mid_G_2)
+	  3. RBE2,(REE2编号),(Mid_G_1的编号),123456,(node1编号),(node2编号),...,(noden编号)
+	  4. RBE2,(REE2编号),(Mid_G_2的编号),123456,(node1编号),(node2编号),...,(nodem编号)
+	  5. PROD,(PROD编号),(Mat_Id),(A)
+	  6. CROD,(CROD编号),(PROD编号),(Mid_G_1),(Mid_G_2)	  
