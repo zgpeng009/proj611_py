@@ -1,19 +1,9 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+# coding: utf-8
 
-from matplotlib.ticker import FormatStrFormatter
-from matplotlib import rc
 import sys
 import os
-import commands
 import traceback
-import shutil
-from time import sleep
 import psutil
-from six import string_types, iteritems
-import time
-import operator
-from operator import attrgetter, itemgetter
 
 from pyNastran.bdf.bdf import BDF
 import tkinter
@@ -460,99 +450,6 @@ class STATIC(BDF):
             txtnew1.write(msg)
             txtnew1.close()
 
-    # def mesh_evaluate(self, long, width, mesh_length, my_output_dir, nastran_dir):
-    #     x = long
-    #     y = width
-    #     v = mesh_length
-    #
-    #     if x > y:
-    #         if v > y:
-    #             nx = int(float(x) / float(v)) + 1
-    #             ny = 2
-    #         else:
-    #             nx = int(float(x) / float(v)) + 1
-    #             ny = int(float(y) / float(v)) + 1
-    #     elif y > x:
-    #         if v > x:
-    #             nx = 2
-    #             ny = int(float(y) / float(v)) + 1
-    #         else:
-    #             nx = int(float(x) / float(v)) + 1
-    #             ny = int(float(y) / float(v)) + 1
-    #
-    #     bdf_str = 'SOL 101\nCEND\nSUBCASE 1\n' \
-    #               '   SUBTITLE=Default\n' \
-    #               '   SPC = 2\n' \
-    #               '   LOAD = 2\n' \
-    #               '   DISPLACEMENT(SORT1,REAL)=ALL\n' \
-    #               '   SPCFORCES(SORT1,REAL)=ALL\n' \
-    #               '   STRESS(SORT1,REAL,VONMISES,BILIN)=ALL\n' \
-    #               'BEGIN BULK\nPARAM,POST,-1\nPARAM   PRTMAXIM YES\n'
-    #
-    #     for j in range(1, ny + 1):
-    #         for i in range(1, nx + 1):
-    #             lx = (i - 1) * float(x) / (nx - 1)
-    #             ly = (j - 1) * float(y) / (ny - 1)
-    #             bdf_str += 'GRID,{},,{},{},0.0\n'.format(
-    #                 (j - 1) * nx + i, lx, ly)
-    #
-    #     for j in range(1, ny):
-    #         for i in range(1, nx):
-    #             nid = (j - 1) * (nx - 1) + i
-    #             g1 = (j - 1) * nx + i
-    #             g2 = (j - 1) * nx + i + 1
-    #             g3 = j * nx + i
-    #             g4 = j * nx + i + 1
-    #             bdf_str += 'CQUAD4,{},1,{},{},{},{}\n'.format(
-    #                 nid, g1, g2, g4, g3)
-    #
-    #     bdf_str += 'PSHELL   1       1      .01      1               1\n' \
-    #                'MAT1     1      7.+10           .3      2700.   2.32-5\n'
-    #     bdf_str += 'SPCADD,2,1\nLOAD,2,1.,1.,1\nSPC1,1,123456,{},{}\n'.format(
-    #         1, (ny - 1) * nx + 1)
-    #     bdf_str += 'FORCE,1,{},,1.0,0.0,0.0,{}\n'.format(nx * ny, 1000.0 / 2)
-    #     bdf_str += 'ENDDATA\n'
-    #
-    #     bdf = my_output_dir + 'mesh_eval.bdf'
-    #     f06 = my_output_dir + 'mesh_eval.f06'
-    #     f1 = open(bdf, 'w')
-    #     f1.write(bdf_str)
-    #     f1.close()
-    #
-    #     if os.path.exists(bdf):
-    #         os.system(
-    #             nastran_dir + ' scr=yes delete=f04,log,xdb old=no out=%s %s' % (my_output_dir, bdf))
-    #     else:
-    #         raise RuntimeError(u'%s下bdf不存在' % (my_output_dir))
-    #
-    #     self.nastran_psutil()
-    #
-    #     if os.path.exists(f06):
-    #         f1 = open(f06, 'r')
-    #         f06_lines = f1.readlines()
-    #         f1.close()
-    #         for line in f06_lines:
-    #             if 'FATAL' not in line.split():
-    #                 pass
-    #             else:
-    #                 raise RuntimeError(u'f06文件%s计算有FATAL错误' % (f06))
-    #         deformed_displacement = {}
-    #         for i in range(len(f06_lines)):
-    #             if 'D I S P L A C E M E N T   V E C T O R' in f06_lines[i]:
-    #                 j = i
-    #                 while 'PAGE' not in f06_lines[j]:
-    #                     j += 1
-    #                 for m in range(i + 3, j):
-    #                     transient_list = f06_lines[m].split()
-    #                     deformed_displacement[int(transient_list[0])] = np.array(
-    #                         [float(transient_list[2]), float(transient_list[3]), float(transient_list[4]),
-    #                          float(transient_list[5]), float(transient_list[6]), float(transient_list[7])])
-    #             elif ' MAXIMUM  DISPLACEMENTS ' in f06_lines[i]:
-    #                 r3 = float(f06_lines[i + 3].split()[4])
-    #     else:
-    #         raise RuntimeError(u'f06文件%s不存在' % (f06))
-    #     return r3, nx * ny
-
     def mesh_evaluate(self, mesh_length, mesh):
         assert len(mesh) == 5, 'len(mesh) error'
         x = mesh[2]
@@ -691,6 +588,7 @@ class STATIC(BDF):
 def main(sys_argv):
     static_nast = STATIC()
     if sys_argv[1] == 'running':
+        assert len(sys_argv) == 6, 'running input_data loss'
         try:
             input_bdf = sys_argv[2]
             force_file = sys_argv[3]
@@ -701,6 +599,7 @@ def main(sys_argv):
         static_nast.run_nast_increment(force_file, input_bdf, output_dir, nastran)
 
     elif sys_argv[1] == 'shear' or sys_argv[1] == 'bend' or sys_argv[1] == 'torque':
+        assert len(sys_argv) == 6, 'shear-bend-torque input_data loss'
         static_nast.read_bdf(sys_argv[2])
         my_begin_loc = np.array([float(x) for x in sys_argv[3].split(',')])
         my_end_loc = np.array([float(x) for x in sys_argv[4].split(',')])
@@ -719,56 +618,24 @@ def main(sys_argv):
                 my_begin_loc, my_end_loc, my_normal_vector, my_point_number, my_f06)
 
     elif sys_argv[1] == 'correlation':
-        # get force
-        force = []
-        _dict = {}
-        min_num = None
-        try:
-            _f = open(sys_argv[2], 'r')
-            lines = _f.readlines()
-            _f.close()
-        except:
-            raise RuntimeError('no force file')
-
-        new_lines = lines[:]
-        if lines:
-            line = lines.pop(0)
-            _list = line.split(',')
-            min_num = int((len(_list) - 1) / 2)
-            for line in lines:
-                _list = line.split(',')
-                min_num = min(min_num, int((len(_list) - 1) / 2))
-
-            for i in range(min_num):
-                _dict = {}
-                for line in new_lines:
-                    _list = line.split(',')
-                    _dict[int(_list[0])] = float(_list[2 * i + 2])
-                _dict["stage"] = [i, int(_list[2 * i + 1])]
-                force.append(_dict)
-
-        my_data_x = []
-        if force:
-            my_data_x = [force[i]['stage'][1] for i in range(len(force))]
-
-        with open(sys_argv[3], 'r') as fp:
-            p_lines = fp.readlines()
-        with open(sys_argv[4], 'r') as fv:
-            v_lines = fv.readlines()
-
-        data1 = [round(float(line.strip(' ')), 3)
-                 for line in v_lines[0].split(',')]
-        data2 = [round(float(line.strip(' ')), 3)
-                 for line in p_lines[0].split(',')]
-
+        assert len(sys_argv) == 5, 'correlation input_data loss'
+        ax_data = sys_argv[2]
+        vt_data = sys_argv[3]
+        pt_data = sys_argv[4]
+        if all([ax_data, pt_data, vt_data]):
+            my_data_x = [int(item.strip(' ')) for item in ax_data.split(',')]
+            data1 = [round(float(item.strip(' ')), 3) for item in vt_data.split(',')]
+            data2 = [round(float(item.strip(' ')), 3) for item in pt_data.split(',')]
+        else:
+            raise RuntimeError('input_data exist null')
         names = ['散点图', '虚拟试验位移', '物理试验位移', '折线图', '加载级', '位移', '虚拟试验', '物理试验']
-
-        if my_data_x:
+        if len(my_data_x) == len(data1) and len(my_data_x) == len(data2):
             static_nast.create_correlation_plot(data1, data2, my_data_x, names)
         else:
-            raise RuntimeError('loadInfo txt file error')
+            raise RuntimeError('input_data count is different')
 
     elif sys_argv[1] == 'bdfedit':
+        assert len(sys_argv) == 6, 'bdfedit input_data loss'
         input_bdf_dir = sys_argv[2]
 
         # get force
@@ -806,37 +673,6 @@ def main(sys_argv):
         static_nast.create_new_grid_dat(
             input_bdf_dir, input_f06_dir, output_dir, len(my_data_x))
 
-    # elif sys_argv[1] == 'meval':
-    #     nastran = sys_argv[2]
-    #     output_dir = sys_argv[3] + '\\'
-    #     x = 4
-    #     y = 2
-    #     # v_list = [(10 - 0.5 * i) for i in range(1, 11)]
-    #     v_list = [0.02, 0.025, 0.03, 0.04, 0.06,
-    #               0.08, 0.1, 0.2, 0.4, 0.6, 0.8, 1.0, 2.0]
-    #     my_max = []
-    #     my_num = []
-    #     if v_list:
-    #         for v in v_list:
-    #             r = static_nast.mesh_evaluate(x, y, v, output_dir, nastran)
-    #             my_max.append(r[0])
-    #             my_num.append(r[1])
-    #     else:
-    #         raise RuntimeError(u'v_list不存在')
-    #
-    #     fig = plt.figure(u'网格评估', facecolor='lightgrey', figsize=(10, 7))
-    #     fig.tight_layout(True, pad=3.0)
-    #     ax = fig.add_subplot(111)
-    #     ax.set_title(u'网格评估', fontsize=18)
-    #     ax.plot(my_num, my_max, color='r', marker='o', label=u'网格')
-    #     # ax.legend(loc='upper right', ncol=1)
-    #     ax.grid(True)
-    #     ax.xaxis.grid(True, which='minor')
-    #     ax.yaxis.grid(True, which='minor')
-    #     ax.set_xlabel(u'单元数量  ', fontsize=15)
-    #     ax.set_ylabel(u'加载点的位移 (单位：mm) ', fontsize=15)
-    #     plt.show()
-
     elif sys_argv[1] == 'meval':
         import copy
         # nastran, output_dir, x, y, h
@@ -872,6 +708,7 @@ def main(sys_argv):
         plt.show()
 
     elif sys_argv[1] == 'peval':
+        assert len(sys_argv) == 5, 'peval input_data loss'
         input_bdf = sys_argv[2]
         nastran = sys_argv[3]
         output_dir = sys_argv[4] + '\\'
