@@ -432,8 +432,9 @@ class STATIC(BDF):
                                    self.nodes[i].xyz
         return self.new_node_xyz
 
-    def create_new_grid_dat(self, my_input_bdf, my_input_f06, my_output_dir, n):
+    def create_new_grid_dat(self, my_input_bdf, my_input_f06, my_output_dir, n, scale_size):
         name = os.path.basename(my_input_bdf).split('.')[0]
+        _scale = float(scale_size)
         self.read_bdf(my_input_bdf)
 
         for i in range(1, n + 1):
@@ -445,7 +446,7 @@ class STATIC(BDF):
             msg = ''
             for j in new_node_xyz:
                 grid = 'GRID,%i,,%s,%s,%s\n' % (
-                    j, new_node_xyz[j][0], new_node_xyz[j][1], new_node_xyz[j][2])
+                    j, new_node_xyz[j][0] * _scale, new_node_xyz[j][1] * _scale, new_node_xyz[j][2] * _scale)
                 msg += grid
             txtnew1.write(msg)
             txtnew1.close()
@@ -635,7 +636,7 @@ def main(sys_argv):
             raise RuntimeError('input_data count is different')
 
     elif sys_argv[1] == 'bdfedit':
-        assert len(sys_argv) == 6, 'bdfedit input_data loss'
+        assert len(sys_argv) == 7, 'bdfedit input_data loss'
         input_bdf_dir = sys_argv[2]
 
         # get force
@@ -670,8 +671,9 @@ def main(sys_argv):
 
         input_f06_dir = os.path.dirname(sys_argv[4])
         output_dir = sys_argv[5] + '\\'
+        scale_size = sys_argv[6]
         static_nast.create_new_grid_dat(
-            input_bdf_dir, input_f06_dir, output_dir, len(my_data_x))
+            input_bdf_dir, input_f06_dir, output_dir, len(my_data_x), scale_size)
 
     elif sys_argv[1] == 'meval':
         import copy
@@ -742,7 +744,7 @@ if __name__ == '__main__':
         # main(sys.argv)
         main([line.split()[1:] for line in
               open('E:\work\\611\\vte\\proj611\\proj611_py\\vte_static.bat', 'r').readlines()
-              if ('correlation' in line and '%py% %input% ' in line)][0])
+              if ('bdfedit' in line and '%py% %input% ' in line)][0])
     except:
         traceback.print_exc()
         wnd = tkinter.Tk()

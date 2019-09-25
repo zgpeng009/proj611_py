@@ -35,7 +35,7 @@ pause
 exit
 
 :bdfedit
-%py% %input% bdfedit E:\\work\\611\\vte\\proj611\\proj611_py\\aerofoil_product.bdf E:\\work\\611\vte\\proj611\\proj611_py\\Result_Data\xx_loadInfo.txt E:\\work\\611\vte\\proj611\\proj611_py\\Result_Data\aerofoil_product_1.f06 E:\\work\\611\vte\\proj611\\proj611_py\\Pp_Data
+%py% %input% bdfedit E:\\work\\611\\vte\\proj611\\proj611_py\\aerofoil_product.bdf E:\\work\\611\vte\\proj611\\proj611_py\\Result_Data\xx_loadInfo.txt E:\\work\\611\vte\\proj611\\proj611_py\\Result_Data\aerofoil_product_1.f06 E:\\work\\611\vte\\proj611\\proj611_py\\Pp_Data 2.5
 pause
 exit
 
