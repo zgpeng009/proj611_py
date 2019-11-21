@@ -410,7 +410,7 @@ class STATIC(BDF):
         fig.tight_layout(h_pad=1.0)
         plt.show()
 
-    def create_new_node_xyz(self, f06_dir_str):
+    def create_new_node_xyz(self, f06_dir_str, scale_size):
         try:
             f = open(f06_dir_str, 'r')
         except IOError:
@@ -428,8 +428,7 @@ class STATIC(BDF):
                             [float(line_list[2]), float(line_list[3]), float(line_list[4])])
             f.close()
         for i in self.node_increment_xyz:
-            self.new_node_xyz[i] = self.node_increment_xyz[i] + \
-                                   self.nodes[i].xyz
+            self.new_node_xyz[i] = self.node_increment_xyz[i] * scale_size + self.nodes[i].xyz
         return self.new_node_xyz
 
     def create_new_grid_dat(self, my_input_bdf, my_input_f06, my_output_dir, n, scale_size):
@@ -442,11 +441,11 @@ class STATIC(BDF):
             txtnew1 = open(my_output_dir + '//' + name +
                            '_' + str(my_stage) + '_grid.dat', "w")
             new_node_xyz = self.create_new_node_xyz(
-                my_input_f06 + '//' + name + '_' + str(my_stage) + '.f06')
+                my_input_f06 + '//' + name + '_' + str(my_stage) + '.f06', _scale)
             msg = ''
             for j in new_node_xyz:
                 grid = 'GRID,%i,,%s,%s,%s\n' % (
-                    j, new_node_xyz[j][0] * _scale, new_node_xyz[j][1] * _scale, new_node_xyz[j][2] * _scale)
+                    j, new_node_xyz[j][0], new_node_xyz[j][1], new_node_xyz[j][2])
                 msg += grid
             txtnew1.write(msg)
             txtnew1.close()

@@ -35,6 +35,11 @@ pause
 exit
 
 :bdfedit
+%py% %input% bdfedi= C:\\Users\\rainf-pzg\\Desktop\\Bdf_Data(2)\\aerofoil_testss001.bdf C:\\Users\\rainf-pzg\\Desktop\\Bdf_Data(2)\\aerofoil_testss001_loadInfo.txt C:\\Users\\rainf-pzg\\Desktop\\Result_Data\\Result_Data\\aerofoil_testss001_1.f06 C:\Users\rainf-pzg\Desktop\pp_data 2.5
+pause
+exit
+
+:bdfedit
 %py% %input% bdfedit E:\\work\\611\\vte\\proj611\\proj611_py\\aerofoil_product.bdf E:\\work\\611\vte\\proj611\\proj611_py\\Result_Data\xx_loadInfo.txt E:\\work\\611\vte\\proj611\\proj611_py\\Result_Data\aerofoil_product_1.f06 E:\\work\\611\vte\\proj611\\proj611_py\\Pp_Data 2.5
 pause
 exit
